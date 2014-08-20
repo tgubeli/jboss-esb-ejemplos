@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<tns:documento xmlns:tns="http://www.example.org/entrada" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/entrada entrada.xsd ">
+  <tns:id>tns:id</tns:id>
+  <tns:descripcion>tns:descripcion</tns:descripcion>
+  <tns:tipo>tns:tipo</tns:tipo>
+</tns:documento>

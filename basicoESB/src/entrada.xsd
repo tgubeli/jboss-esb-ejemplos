@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/entrada" xmlns:tns="http://www.example.org/entrada" elementFormDefault="qualified">
+
+    <complexType name="Documento">
+    	<sequence>
+    		<element name="id" type="string"></element>
+    		<element name="descripcion" type="string"></element>
+    		<element name="tipo" type="string"></element>
+    	</sequence>
+    </complexType>
+
+    <element name="documento" type="tns:Documento"></element>
+</schema>

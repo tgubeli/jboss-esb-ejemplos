@@ -1,0 +1,4 @@
+<jbossesb-deployment>
+  <depends>jboss.esb.poc.destination:service=Queue,name=queue_basico_gw</depends>
+  <depends>jboss.esb.poc.destination:service=Queue,name=queue_basico_esb</depends>
+</jbossesb-deployment>

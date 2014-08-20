@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<jbossesb parameterReloadSecs="5"
+ xmlns="http://anonsvn.labs.jboss.com/labs/jbossesb/trunk/product/etc/schemas/xml/jbossesb-1.3.0.xsd"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://anonsvn.labs.jboss.com/labs/jbossesb/trunk/product/etc/schemas/xml/jbossesb-1.3.0.xsd http://anonsvn.jboss.org/repos/labs/labs/jbossesb/trunk/product/etc/schemas/xml/jbossesb-1.3.0.xsd">
+ <providers>
+  <jms-provider connection-factory="ConnectionFactory" name="jmsGW">
+   <jms-bus busid="jmsCanalGW">
+    <jms-message-filter dest-name="queue/queue_basico_gw" dest-type="QUEUE"/>
+   </jms-bus>
+  </jms-provider>
+  <!-- jms-provider connection-factory="ConnectionFactory" name="jmsESB">
+   <jms-bus busid="jmsCanalESB">
+    <jms-message-filter dest-name="queue/queue_basico_esb" dest-type="QUEUE"/>
+   </jms-bus>
+  </jms-provider-->
+  <fs-provider name="fs">
+   <fs-bus busid="canalFs"/>
+  </fs-provider>
+ </providers>
+ <services>
+  <service category="basico"
+   description="Primer servicio basico para la POC" invmScope="GLOBAL" name="ServicioBasico">
+   <listeners>
+    <jms-listener busidref="jmsCanalGW" is-gateway="true" name="jmsListenerGW"/>
+    <!-- jms-listener busidref="jmsCanalESB" name="jmsListenerESB"/-->
+    <fs-listener busidref="canalFs" is-gateway="true" name="fsGw" poll-frequency-seconds="5">
+     <fs-message-filter
+      directory="/home/gonzalo/Work/redhat/proyectos_clientes/ADUANA/fs"
+      error-directory="/home/gonzalo/Work/redhat/proyectos_clientes/ADUANA/fs"
+      error-suffix=".error" input-suffix=".xml" post-delete="false"
+      post-directory="/home/gonzalo/Work/redhat/proyectos_clientes/ADUANA/fs"
+      post-rename="true" post-suffix=".esb" work-suffix=".working"/>
+    </fs-listener>
+   </listeners>
+   <actions mep="OneWay">
+    <action class="org.jboss.soa.esb.actions.Notifier" name="Notificador">
+     <property name="okMethod" value="notifyOK"/>
+     <property name="exceptionMethod" value="notifyError"/>
+     <property name="destinations">
+      <NotificationList type="ok">
+       <target class="NotifyConsole"/>
+      </NotificationList>
+      <NotificationList type="err">
+       <target class="NotifyConsole"/>
+      </NotificationList>
+     </property>
+    </action>
+    <action class="org.jboss.soa.esb.actions.SystemPrintln" name="Imprimir contenido del mensaje ESB">
+     <property name="message" value="Mensaje de entrada"/>
+    </action>
+    <action class="org.jboss.soa.esb.services.jbpm.actions.BpmProcessor" name="Inicio Proceso complejo">
+     <property name="command" value="NewProcessInstanceCommand"/>
+     <property name="process-definition-name" value="complejo"/>
+     <property name="process-definition-id" value="19"/>
+     <property name="esbToBpmVars">
+      <mapping bpm="numero" esb="body.documento.numero"/>
+      <mapping bpm="XML_EN_BPM" esb="BODY_CONTENT"/>
+     </property>
+    </action>
+    <action
+     class="org.jboss.soa.esb.actions.validation.SchemaValidationAction" name="Validacion del XML segun schema de entrada">
+     <property name="schema" value="/entrada.xsd"/>
+    </action>
+    <action class="org.jboss.soa.esb.actions.SystemPrintln" name="Imprimir contenido del mensaje ESB salida">
+     <property name="message" value="Mensaje de salida"/>
+    </action>
+   </actions>
+  </service>
+ </services>
+</jbossesb>
